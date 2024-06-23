@@ -90,19 +90,15 @@ public class TaxCalculatorUtil {
         for (CreditCardDeductionMonth creditCardDeductionMonth : creditCardDeductionMonthList){
             totalDeductionAmmount += convertingValue(creditCardDeductionMonth.getAmount());
         }
-        System.err.println(totalDeductionAmmount);
 
         //과표
         long baseTax = roundHalfUp(userTaxationInfo.getTotalIncome().doubleValue() - totalDeductionAmmount);
-        System.err.println(userTaxationInfo.getTotalIncome().doubleValue() - totalDeductionAmmount);
-        System.err.println("과세표준 : " + baseTax);
+
         // 산출세액
         long tax = calculateTaxAmount(baseTax);
-        System.err.println("산출세액 : " + tax);
 
         // 결정세액
         long result = roundHalfUp(tax - convertingValue(userTaxationInfo.getTaxDeduction()));
-        System.err.println("결정세액 : " + result);
 
         return result;
     }
