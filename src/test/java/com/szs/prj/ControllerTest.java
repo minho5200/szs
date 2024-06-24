@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -60,6 +61,10 @@ public class ControllerTest {
         User userAfter = userRepository.findById(dto.getUserId()).orElseThrow();
 
         assertEquals(userBefore.getName(), userAfter.getName());
+        boolean passwordsMatch = passwordEncoder.matches("test1234", userAfter.getPassword());
+        assertTrue(passwordsMatch);
+        assertEquals(userBefore.getRegNo(), userAfter.getRegNo());
+        assertEquals(userBefore.getUserId(), userAfter.getUserId());
     }
 
     @Autowired
