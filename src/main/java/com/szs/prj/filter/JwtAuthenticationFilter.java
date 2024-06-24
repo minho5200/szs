@@ -1,9 +1,6 @@
 package com.szs.prj.filter;
 
 import com.szs.prj.compo.JwtCompo;
-import com.szs.prj.compo.WebClientCompo;
-import com.szs.prj.dto.ScrapReqDto;
-import com.szs.prj.dto.UserTaxationInfoDto;
 import com.szs.prj.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,15 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 
 @RequiredArgsConstructor

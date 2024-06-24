@@ -1,17 +1,17 @@
 package com.szs.prj.controller;
 
 import com.szs.prj.advice.exception.CInvalidException;
-import com.szs.prj.compo.WebClientCompo;
 import com.szs.prj.dto.*;
 import com.szs.prj.entity.User;
 import com.szs.prj.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,15 +20,14 @@ public class SzsController {
 
     private final UserService userService;
 
-    private final WebClientCompo webClientCompo;
+    private final WebClient scrapWebclient;
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpReqDto dto, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-           return ResponseEntity.badRequest().body("입력된 데이터의 형식이 올바르지 않습니다.");
+            return ResponseEntity.badRequest().body("입력된 데이터의 형식이 올바르지 않습니다.");
         }
-        dto.setEncRegNo();
-
         return ResponseEntity.ok(userService.signUp(dto));
     }
 
@@ -50,7 +49,7 @@ public class SzsController {
         scrapReqDto.setRegNo(user.getRegNo());
 
         //scarp 호출
-        ApiResDto scrapData = webClientCompo.scrapWebClient().post()
+        ApiResDto scrapData = scrapWebclient.post()
                 .bodyValue(scrapReqDto).retrieve().bodyToMono(ApiResDto.class).block();
 
         if (scrapData.getErrors().getCode() != null && scrapData.getErrors().getCode().equals("-1")) {
@@ -63,6 +62,11 @@ public class SzsController {
     @GetMapping("/refund")
     public ResponseEntity<?> refund(HttpServletRequest req) {
         User user = (User) req.getAttribute("userInfo");
+
+        if (user == null) {
+            throw new CInvalidException();
+        }
+
         RefundResDto result = new RefundResDto();
         result.setDecisionTaxAmount(userService.createDecisionTaxAmount(user));
         return ResponseEntity.ok(result);

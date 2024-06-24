@@ -26,7 +26,7 @@ public class JwtCompo {
 
     private final UserRepository userRepository;
 
-    @Value("${jwt.secret.key}")
+    @Value("${jwt.secret.salt}")
     private String salt;
 
     private Key secretKey;

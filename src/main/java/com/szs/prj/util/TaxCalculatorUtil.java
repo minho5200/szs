@@ -45,30 +45,29 @@ public class TaxCalculatorUtil {
     );
 
     // 산출세액 계산기
-    public long calculateTaxAmount(long baseTax) {
+    public static long calculateTaxAmount(long baseTax) {
         for (TaxBracket bracket : TAX_BRACKETS) {
             if (baseTax <= bracket.getUpperLimit()) {
-                return roundHalfUp(bracket.getBaseTax() + (baseTax - getPreviousLimit(bracket)) * bracket.getRate());
+                return round(bracket.getBaseTax() + (baseTax - getPreviousLimit(bracket)) * bracket.getRate());
             }
         }
-        return roundHalfUp(TOP_BASE_TAX + (baseTax - 1000000000) * TOP_RATE);
+        return round(TOP_BASE_TAX + (baseTax - 1000000000) * TOP_RATE);
     }
 
     // 이전 구간
-    private long getPreviousLimit(TaxBracket currentBracket) {
+    private static long getPreviousLimit(TaxBracket currentBracket) {
         int index = TAX_BRACKETS.indexOf(currentBracket);
         return index == 0 ? 0 : TAX_BRACKETS.get(index - 1).getUpperLimit();
     }
 
     //소수점 계산기
-    private long roundHalfUp(double value) {
+    private static long round(double value) {
         long result = Math.round(value);
-
         return result;
     }
 
     // 캐스팅
-    private double convertingValue(String value) {
+    private static double convertingValue(String value) {
         double doubleValue = 0;
         try {
             DecimalFormat decimalFormat = new DecimalFormat();
@@ -81,7 +80,7 @@ public class TaxCalculatorUtil {
     }
 
     // 최종 계산식
-    public long processTax(UserTaxationInfo userTaxationInfo, List<Pension> pensionList, List<CreditCardDeductionMonth> creditCardDeductionMonthList) {
+    public static long processTax(UserTaxationInfo userTaxationInfo, List<Pension> pensionList, List<CreditCardDeductionMonth> creditCardDeductionMonthList) {
         double totalDeductionAmmount = 0;
         for (Pension pension : pensionList) {
             totalDeductionAmmount += convertingValue(pension.getDeductionAmount());
@@ -90,15 +89,12 @@ public class TaxCalculatorUtil {
         for (CreditCardDeductionMonth creditCardDeductionMonth : creditCardDeductionMonthList){
             totalDeductionAmmount += convertingValue(creditCardDeductionMonth.getAmount());
         }
-
         //과표
-        long baseTax = roundHalfUp(userTaxationInfo.getTotalIncome().doubleValue() - totalDeductionAmmount);
-
+        long baseTax = round(userTaxationInfo.getTotalIncome().doubleValue() - totalDeductionAmmount);
         // 산출세액
         long tax = calculateTaxAmount(baseTax);
-
         // 결정세액
-        long result = roundHalfUp(tax - convertingValue(userTaxationInfo.getTaxDeduction()));
+        long result = round(tax - convertingValue(userTaxationInfo.getTaxDeduction()));
 
         return result;
     }

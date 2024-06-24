@@ -35,16 +35,6 @@ public class SignUpReqDto {
     @Pattern(regexp = "\\d{6}-[1-4]\\d{6}", message = "올바른 주민등록번호 형식을 입력해주세요. (YYMMDD-gabcdef)")
     public String regNo;
 
-
-    //해당 요청값이 들어오면 바로 encrypt
-    public void setPassword(String password) {
-        try{
-            this.password = AESUtil.encrypt(password);
-        } catch (Exception e){
-            throw new CInvalidException();
-        }
-    }
-
     public void setEncRegNo() {
         try{
             this.regNo = AESUtil.encrypt(this.regNo);

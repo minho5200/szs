@@ -1,12 +1,12 @@
-package com.szs.prj.compo;
+package com.szs.prj.config;
 
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import reactor.netty.http.client.HttpClient;
@@ -14,9 +14,9 @@ import reactor.netty.http.client.HttpClient;
 import javax.net.ssl.SSLException;
 import java.time.Duration;
 
-@Component
+@Configuration
 @RequiredArgsConstructor
-public class WebClientCompo {
+public class WebClientConfig {
 
     @Value("${webclient.scrap.timeout}")
     private Long timeOut;

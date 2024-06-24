@@ -9,6 +9,7 @@ import com.szs.prj.entity.*;
 import com.szs.prj.repository.*;
 import com.szs.prj.util.TaxCalculatorUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final JwtCompo jwtCompo;
+    private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserTaxationInfoRepository userTaxationInfoRepository;
     private final PensionRepository pensionRepository;
@@ -33,6 +35,10 @@ public class UserService {
     private final CreditCardDeductionRepository creditCardDeductionRepository;
 
     public boolean signUp(SignUpReqDto dto) {
+        //암호화 처리
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        dto.setEncRegNo();
+
         //조회시 user가 이미 존재하면 exception
         if (userRepository.findById(dto.getUserId()).isPresent()) {
             throw new CDuplicatedException();
@@ -48,7 +54,7 @@ public class UserService {
         // 정보 조회를 시도
         User user = userRepository.findById(dto.getUserId()).orElseThrow(CNotExistUserException::new);
 
-        if (!user.getPassword().equals(dto.getPassword())) {
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             // 패스워드가 맞지 않을때
             throw new CInvalidException();
         }
@@ -112,14 +118,13 @@ public class UserService {
         return true;
     }
 
-    public long createDecisionTaxAmount(User user){
+    public long createDecisionTaxAmount(User user) {
         UserTaxationInfo userTaxationInfo = userTaxationInfoRepository.findByUserId(user.getUserId()).orElseThrow(CNotExistUserException::new);
         List<Pension> pensionList = pensionRepository.findByUserTaxationInfoId(userTaxationInfo.getId());
         CreditCardDeduction creditCardDeduction = creditCardDeductionRepository.findByUserTaxationInfoId(userTaxationInfo.getId()).orElseThrow(CNotExistUserException::new);
         List<CreditCardDeductionMonth> creditCardDeductionMonthList = creditCardDeductionMonthRepository.findByCreditCardDeductionId(creditCardDeduction.getId());
 
-        TaxCalculatorUtil calculatorUtil = new TaxCalculatorUtil();
-        return calculatorUtil.processTax(userTaxationInfo, pensionList, creditCardDeductionMonthList);
+        return TaxCalculatorUtil.processTax(userTaxationInfo, pensionList, creditCardDeductionMonthList);
     }
 
 }

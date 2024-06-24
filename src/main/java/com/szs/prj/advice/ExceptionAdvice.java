@@ -1,9 +1,6 @@
 package com.szs.prj.advice;
 
-import com.szs.prj.advice.exception.CDuplicatedException;
-import com.szs.prj.advice.exception.CEncDecFailException;
-import com.szs.prj.advice.exception.CNotExistUserException;
-import com.szs.prj.advice.exception.CInvalidException;
+import com.szs.prj.advice.exception.*;
 import com.szs.prj.dto.ResExceptionDto;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +45,7 @@ public class ExceptionAdvice {
         ResExceptionDto result = new ResExceptionDto();
         result.setCode("E002");
         result.setMsg("존재하지 않는 유저정보입니다.");
-        return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CInvalidException.class)
@@ -65,5 +62,13 @@ public class ExceptionAdvice {
         result.setCode("E004");
         result.setMsg("중복된 요청입니다.");
         return new ResponseEntity<>(result, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(CNotExistDataException.class)
+    protected ResponseEntity<?> cNotExistDataException(HttpServletRequest req, Exception e){
+        ResExceptionDto result = new ResExceptionDto();
+        result.setCode("E005");
+        result.setMsg("해당 데이터가 존재하지 않습니다.");
+        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
     }
 }

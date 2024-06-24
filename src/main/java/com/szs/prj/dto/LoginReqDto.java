@@ -21,13 +21,4 @@ public class LoginReqDto {
     @Schema(description = "사용자 비밀번호", example = "test1234")
     public String password;
 
-    //해당 요청값이 들어오면 바로 encrypt
-    public void setPassword(String password) {
-        try {
-            this.password = AESUtil.encrypt(password);
-        } catch (Exception e){
-            throw new CDuplicatedException();
-        }
-
-    }
 }
