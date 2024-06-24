@@ -1,6 +1,7 @@
 package com.szs.prj;
 
 import com.szs.prj.compo.JwtCompo;
+import com.szs.prj.config.SecurityConfig;
 import com.szs.prj.dto.LoginReqDto;
 import com.szs.prj.dto.RefundResDto;
 import com.szs.prj.dto.SignUpReqDto;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +39,9 @@ public class ControllerTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     //회원가입 테스트
     @Test
     void signUpTest() throws Exception {
@@ -50,7 +55,7 @@ public class ControllerTest {
                         .content(jsonDto))
                 .andExpect(status().isOk());
 
-        User userBefore = User.builder().userId("test5").password(AESUtil.encrypt("test1234"))
+        User userBefore = User.builder().userId("test5").password(passwordEncoder.encode("test1234"))
                 .regNo(AESUtil.encrypt("810326-2715702")).name("조조").build();
         User userAfter = userRepository.findById(dto.getUserId()).orElseThrow();
 
