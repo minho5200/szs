@@ -2,14 +2,13 @@
 ## 1) 회원가입 (/szs/signup)
 - userId, password, name, regNo 의 키를 갖는 json데이터를 받아 jpa를 통해 h2에 저장합니다.
 - regNo에만 주민등록번호 형태의 데이터 검증을 한번 더 합니다.
-- password는 데이터를 받는 즉시 암호화 하며, regNo는 검증 이후 서비스로직으로 넘기기전에 암호화합니다.
+- regNo는 검증 이후 서비스 로직으로 넘기며 양방향 암호화하며, password는 단방향 암호화 합니다.
 - 서비스로직에서 userId를 통해 중복가입 확인을 합니다.
 - Security의 Filter로직을 거치지 않고 진행합니다.
 - 성공시 200, true를 리턴합니다.
 
 ## 2) 로그인 (/szs/login)
 - userId, password 의 키를 갖는 json데이터를 받습니다.
-- password는 데이터를 받는 즉시 암호화 합니다.
 - 서비스로직에서 userId를 통해 존재유무를 체크하며 (409) , 존재하면 이후 패스워드 검증 (400) 을 합니다.
 - Security의 Filter로직을 거치지 않고 진행합니다.
 - 성공시 200, accessToken 의 키를 가지며 jwt token을 리턴합니다.
