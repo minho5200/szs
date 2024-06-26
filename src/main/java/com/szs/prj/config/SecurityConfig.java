@@ -68,7 +68,6 @@ public class SecurityConfig {
 
     // filter 를 태우지 않는다.
     @Bean
-    @ConditionalOnProperty(name = "spring.h2.console.enabled",havingValue = "true")
     public WebSecurityCustomizer configureH2ConsoleEnable() {
         return web -> web.ignoring()
                 .requestMatchers(PathRequest.toH2Console())
